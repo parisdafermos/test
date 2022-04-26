@@ -5,33 +5,39 @@ import {
   CardContent,
   Grid,
   Link,
-  TextField,
   Toolbar,
   Typography,
   Box,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 function App() {
+  const [consumer, setConsumer] = useState([]);
   const [data, setData] = useState([]);
   useEffect(() => {
     fetch("./data/data.json")
       .then((response) => response.json())
       .then((data) => {
         setData(data);
-        console.log(data);
-        console.log(data.locations[0].consumers[0]);
-        //console logs for testing purposes
+        console.log(data.locations);
+        // console.log(data.locations[0].consumers[0]);
+        //console logs for testing purposes\
+        // for (let i = 0; i < data.locations.length; i++) {
         const locationConsumers = data.locations.map((location) => {
           return {
-            consumers: location.consumers,
+            name: location.consumers[0].name,
+            date: location.consumers[0].occupationDate,
+            phone: location.consumers[0].phoneNumber,
+            email: location.consumers[0].email,
           };
+          //could not figure out how to do it for all 4 strings in the array
         });
-        const individualConsumer = locationConsumers.map((consumer) => {
-          console.log({
-            name: consumer.name,
-            // I get undefined here
-          });
-        });
+
+        console.log(locationConsumers);
+        setConsumer(locationConsumers);
       });
   }, []);
   return (
@@ -50,32 +56,45 @@ function App() {
           spacing={3}
         >
           <Grid item md={6} sm={9} xs={12}>
-            <TextField label="Search" />
+            <FormControl sx={{ m: 1, minWidth: 80 }}>
+              <InputLabel id="demo-simple-select-autowidth-label">
+                Phone Number filter
+              </InputLabel>
+              <Select
+                // onChange={handleChange}
+                autoWidth
+              >
+                <MenuItem value={true}>isPhoneNumber</MenuItem>
+                <MenuItem value={false}>isNotPhoneNumber</MenuItem>
+              </Select>
+            </FormControl>
           </Grid>
 
           <Grid item md={6} sm={9} xs={12}>
-            <Card>
-              <CardContent>
-                <Typography color="textSecondary" gutterBottom>
-                  2020-05-22(Occupation date)
-                  {/* hardcoded currently */}
-                </Typography>
-                <Typography variant="h5" component="h2">
-                  FirstName LastName(name)
-                  {/* hardcoded currently */}
-                </Typography>
-                <Typography color="textSecondary" gutterBottom>
-                  <Link href="http://google.com" rel="noopener" target="_blank">
-                    http://test12@gmail.com(email)
-                    {/* hardcoded currently */}
-                  </Link>
-                </Typography>
-                <Typography variant="h6" component="h2">
-                  07546983574(phone)
-                  {/* hardcoded currently */}
-                </Typography>
-              </CardContent>
-            </Card>
+            {consumer.map((individual) => (
+              <Card key={individual.name} sx={{ m: 2 }}>
+                <CardContent>
+                  <Typography color="textSecondary" gutterBottom>
+                    {individual.date}
+                  </Typography>
+                  <Typography variant="h5" component="h2">
+                    {individual.name}
+                  </Typography>
+                  <Typography color="textSecondary" gutterBottom>
+                    <Link
+                      href={`mailto:${individual.email}`}
+                      rel="noopener"
+                      target="_blank"
+                    >
+                      {individual.email}
+                    </Link>
+                  </Typography>
+                  <Typography variant="h6" component="h2">
+                    {individual.phone}
+                  </Typography>
+                </CardContent>
+              </Card>
+            ))}
           </Grid>
         </Grid>
       </Box>
