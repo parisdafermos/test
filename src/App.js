@@ -26,14 +26,17 @@ function App() {
         // console.log(data.locations[0].consumers[0]);
         //console logs for testing purposes\
         // for (let i = 0; i < data.locations.length; i++) {
-        const locationConsumers = data.locations.map((location) => {
+        let consumers = data.locations
+          .map((location) => location.consumers)
+          .flat();
+        const locationConsumers = consumers.map((consumer) => {
           return {
-            name: location.consumers[0].name,
-            date: location.consumers[0].occupationDate,
-            phone: location.consumers[0].phoneNumber,
-            email: location.consumers[0].email,
+            name: consumer.name,
+            date: consumer.occupationDate,
+            phone: consumer.phoneNumber,
+            email: consumer.email,
+            isPhoneMobile: consumer.isPhoneMobile,
           };
-          //could not figure out how to do it for all 4 strings in the array
         });
 
         console.log(locationConsumers);
